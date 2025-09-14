@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/wedding/',  // this must match your repo name
+  base: '/weddingSite/',  // must match your repo name exactly
 });
