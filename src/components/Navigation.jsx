@@ -2,28 +2,8 @@ import React, { useState, useEffect } from "react";
 
 const WeddingNavigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [daysLeft, setDaysLeft] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const highlightColor = "#e11d48";
-
-  useEffect(() => {
-    // Wedding date in Philippines time (October 24, 2025)
-    const weddingDate = new Date("2025-10-24T00:00:00+08:00");
-
-    const interval = setInterval(() => {
-      // Current time in Philippines
-      const now = new Date();
-      // convert current time to PH time offset
-      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-      const nowPH = new Date(utc + 8 * 60 * 60 * 1000);
-
-      const diff = weddingDate - nowPH;
-      const days = Math.max(Math.ceil(diff / (1000 * 60 * 60 * 24)), 0);
-      setDaysLeft(days);
-    }, 1000 * 60 * 60); // every hour
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -40,167 +20,300 @@ const WeddingNavigation = () => {
     { name: "Contact", href: "#contact" },
   ];
 
+  const handleProfileClick = () => {
+    // Add your profile management logic here
+    console.log("Manage Profile clicked");
+  };
+
   return (
-    <div>
-      <nav
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          background: isScrolled ? "#fff" : "rgba(255,255,255,0.1)",
-          boxShadow: isScrolled ? "0 2px 10px rgba(0,0,0,0.1)" : "none",
-          transition: "all 0.3s ease",
-          zIndex: 1000,
-          padding: "1rem 2rem",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontFamily: "Arial, sans-serif",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "3rem",
-            width: "100%",
-            maxWidth: "1200px",
-          }}
-        >
+    <>
+      <nav className={`nav-container ${isScrolled ? 'scrolled' : ''}`}>
+        <div className="nav-content">
           {/* Brand */}
-          <div
-            style={{
-              fontWeight: "700",
-              fontSize: "1.6rem",
-              color: isScrolled ? "#333" : "#fff",
-              cursor: "pointer",
-              transition: "color 0.3s",
-            }}
+          <div 
+            className="brand"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
             Jimmy & Elaiza's Wedding
           </div>
 
-          {/* Desktop Menu */}
-          <div
-            className="desktop-menu"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "1.5rem",
-              flexGrow: 1,
-              justifyContent: "flex-end",
-            }}
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="mobile-menu-toggle md:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
           >
+            <div className={`hamburger ${menuOpen ? 'open' : ''}`}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </button>
+
+          {/* Desktop Menu */}
+          <div className="desktop-menu hidden md:flex">
             {navItems.map((item, index) => (
               <a
                 key={index}
                 href={item.href}
-                style={{
-                  textDecoration: "none",
-                  color: isScrolled ? "#333" : "#fff",
-                  fontWeight: 500,
-                  transition: "all 0.3s",
-                  padding: "0.3rem 0.5rem",
-                  borderRadius: "5px",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = highlightColor)}
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = isScrolled ? "#333" : "#fff")
-                }
+                className="nav-link"
               >
                 {item.name}
               </a>
             ))}
 
-            {/* Countdown */}
-            <div
-              style={{
-                padding: "0.4rem 0.8rem",
-                borderRadius: "20px",
-                background: isScrolled ? "#f8d7da" : "rgba(255,255,255,0.2)",
-                color: isScrolled ? highlightColor : "#fff",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                cursor: "pointer",
-                transition: "all 0.3s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.1)";
-                e.currentTarget.style.background = isScrolled
-                  ? "#f5c6cb"
-                  : "rgba(255,255,255,0.4)";
-                e.currentTarget.style.color = highlightColor;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.background = isScrolled
-                  ? "#f8d7da"
-                  : "rgba(255,255,255,0.2)";
-                e.currentTarget.style.color = isScrolled ? highlightColor : "#fff";
-              }}
+            {/* Manage Profile Button */}
+            <button 
+              className="profile-btn"
+              onClick={handleProfileClick}
             >
-              {daysLeft} days left
-            </div>
+              Manage Profile
+            </button>
           </div>
         </div>
       </nav>
 
-      {menuOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: "70px",
-            left: 0,
-            right: 0,
-            background: "#fff",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-            zIndex: 999,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            padding: "1rem 0",
+      {/* Mobile Menu */}
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        {navItems.map((item, index) => (
+          <a
+            key={index}
+            href={item.href}
+            className="mobile-nav-link"
+            onClick={() => setMenuOpen(false)}
+          >
+            {item.name}
+          </a>
+        ))}
+        <button 
+          className="mobile-profile-btn"
+          onClick={() => {
+            handleProfileClick();
+            setMenuOpen(false);
           }}
         >
-          {navItems.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              style={{
-                textDecoration: "none",
-                color: "#333",
-                fontWeight: 500,
-                fontSize: "1.2rem",
-                margin: "0.5rem 0",
-                transition: "all 0.3s",
-              }}
-              onClick={() => setMenuOpen(false)}
-              onMouseEnter={(e) => (e.currentTarget.style.color = highlightColor)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#333")}
-            >
-              {item.name}
-            </a>
-          ))}
-        </div>
-      )}
+          Manage Profile
+        </button>
+      </div>
 
-      <div style={{ height: "80px" }}></div>
+      {/* Spacer */}
+      <div className="nav-spacer"></div>
 
-      <style>
-        {`
-          @media (max-width: 768px) {
-            .desktop-menu {
-              display: none;
-            }
-            .mobile-menu {
-              display: block;
-            }
+      <style jsx>{`
+        .nav-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 1000;
+          padding: 1rem 2rem;
+        }
+
+        .nav-container.scrolled {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          max-width: 1200px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        .brand {
+          font-weight: 700;
+          font-size: 1.5rem;
+          color: ${isScrolled ? '#1f2937' : '#ffffff'};
+          cursor: pointer;
+          transition: all 0.3s ease;
+          letter-spacing: -0.025em;
+        }
+
+        .brand:hover {
+          color: ${highlightColor};
+          transform: scale(1.02);
+        }
+
+        .desktop-menu {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+        }
+
+        .nav-link {
+          text-decoration: none;
+          color: ${isScrolled ? '#374151' : '#ffffff'};
+          font-weight: 500;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+          padding: 0.5rem 0.75rem;
+          border-radius: 8px;
+          position: relative;
+        }
+
+        .nav-link:hover {
+          color: ${highlightColor};
+          background: ${isScrolled ? 'rgba(225, 29, 72, 0.1)' : 'rgba(255, 255, 255, 0.1)'};
+          transform: translateY(-1px);
+        }
+
+        .profile-btn {
+          background: ${highlightColor};
+          color: white;
+          border: none;
+          padding: 0.5rem 1.25rem;
+          border-radius: 25px;
+          font-weight: 600;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
+        }
+
+        .profile-btn:hover {
+          background: #be185d;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(225, 29, 72, 0.4);
+        }
+
+        .mobile-menu-toggle {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0.5rem;
+          border-radius: 4px;
+          transition: background 0.2s;
+        }
+
+        .mobile-menu-toggle:hover {
+          background: rgba(0, 0, 0, 0.1);
+        }
+
+        .hamburger {
+          display: flex;
+          flex-direction: column;
+          width: 24px;
+          height: 18px;
+          justify-content: space-between;
+        }
+
+        .hamburger span {
+          display: block;
+          height: 2px;
+          background: ${isScrolled ? '#1f2937' : '#ffffff'};
+          border-radius: 1px;
+          transition: all 0.3s ease;
+          transform-origin: center;
+        }
+
+        .hamburger.open span:first-child {
+          transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.open span:nth-child(2) {
+          opacity: 0;
+        }
+
+        .hamburger.open span:last-child {
+          transform: translateY(-8px) rotate(-45deg);
+        }
+
+        .mobile-menu {
+          position: fixed;
+          top: 80px;
+          left: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          z-index: 999;
+          padding: 1.5rem 2rem;
+          transform: translateY(-100%);
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-menu.open {
+          transform: translateY(0);
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .mobile-nav-link {
+          display: block;
+          text-decoration: none;
+          color: #374151;
+          font-weight: 500;
+          font-size: 1.1rem;
+          padding: 0.75rem 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+        }
+
+        .mobile-nav-link:hover {
+          color: ${highlightColor};
+          padding-left: 0.5rem;
+        }
+
+        .mobile-nav-link:last-of-type {
+          border-bottom: none;
+          margin-bottom: 1rem;
+        }
+
+        .mobile-profile-btn {
+          width: 100%;
+          background: ${highlightColor};
+          color: white;
+          border: none;
+          padding: 0.75rem 1.5rem;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .mobile-profile-btn:hover {
+          background: #be185d;
+          transform: translateY(-1px);
+        }
+
+        .nav-spacer {
+          height: 80px;
+        }
+
+        /* Responsive utilities */
+        .hidden {
+          display: none;
+        }
+
+        @media (min-width: 768px) {
+          .md\\:flex {
+            display: flex;
           }
-        `}
-      </style>
-    </div>
+          
+          .md\\:hidden {
+            display: none;
+          }
+        }
+
+        /* Smooth scrolling for anchor links */
+        html {
+          scroll-behavior: smooth;
+        }
+      `}</style>
+    </>
   );
 };
 

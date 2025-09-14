@@ -1,22 +1,33 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const WeddingMusic = ({ musicUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
+  // Ensure the audio element is ready
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load(); // reload the audio
+    }
+  }, [musicUrl]);
+
   const togglePlay = () => {
-    if (!audioRef.current) return;
+    const audio = audioRef.current;
+    if (!audio) return;
 
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
       setIsPlaying(false);
     } else {
-      const playPromise = audioRef.current.play();
+      const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise
-          .then(() => setIsPlaying(true))
+          .then(() => {
+            setIsPlaying(true);
+          })
           .catch((error) => {
             console.log("Audio play failed:", error);
+            alert("Audio failed to play. Make sure your file path is correct and your browser allows audio playback.");
           });
       }
     }

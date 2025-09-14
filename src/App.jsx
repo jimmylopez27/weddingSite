@@ -14,7 +14,7 @@ function App() {
   return (
     <>
       <Navigation />
-      <WeddingMusic musicUrl="/music/weddingMusic.mp3" />
+      <WeddingMusic musicUrl="./music/weddingMusic.mp3" />
       <OurStory />
       <EventDetails />
       <WeddingCrew />
